@@ -1,19 +1,14 @@
 package com.liquibase.liquibase.services;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import com.liquibase.liquibase.House;
 import com.liquibase.liquibase.Item;
-import com.liquibase.liquibase.exceptions.ResourceNotFoundException;
 import com.liquibase.liquibase.repositories.HouseRepository;
 import com.liquibase.liquibase.repositories.ItemRepository;
 
@@ -50,14 +45,6 @@ public class LiquibaseService {
 		return houseRepository.findById(id);
 	}
 	
-//	public List<House> findHouseByOwner(String owner) {
-//		return houseRepository.findByOwner(owner);
-//	}
-	
-	public List<Item> findAllItems() {
-		return itemRepository.findAll();
-	}
-	
 	public Optional<Item> findItemById(int id) {
 		return itemRepository.findById(id);
 	}
@@ -65,5 +52,20 @@ public class LiquibaseService {
 	public List<House> saveAllHouses(List<House> houses) {
 		return houseRepository.saveAll(houses);
 	}
+
+	public List<Item> findAllItems(String name) {
+		List<Item> items = null;
+		if(name == null) {
+			items = itemRepository.findAll();
+		} else {
+			items = itemRepository.findByNameIgnoreCase(name);
+		}
+		return items;
+	}
+
+	public void deleteAll() {
+		houseRepository.deleteAll();
+	}
+
 	
 }

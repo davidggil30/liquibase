@@ -3,25 +3,24 @@ package com.liquibase.liquibase.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.liquibase.liquibase.House;
 import com.liquibase.liquibase.Item;
 import com.liquibase.liquibase.exceptions.ResourceNotFoundException;
 import com.liquibase.liquibase.services.LiquibaseService;
-
-import ch.qos.logback.core.model.Model;
 
 @RestController
 @RequestMapping("/api")
@@ -33,9 +32,15 @@ public class LiquibaseController {
 		this.service = service;
 	}
 	
-	@PostMapping("/houses")
-	public List<House> saveAllHouses(@RequestBody List<House> houses) {	
+	@PostMapping(value="/houses")
+	@ResponseStatus(HttpStatus.CREATED)
+	public List<House> saveAllHouses(@RequestBody List<House> houses) {
 		return service.saveAllHouses(houses);
+	}
+	
+	@DeleteMapping(value="/houses")
+	public void deleteAll() {
+		service.deleteAll();
 	}
 	
 	@GetMapping(value="/houses")
@@ -49,19 +54,14 @@ public class LiquibaseController {
 		return service.findHouseById(id).orElseThrow(()->new ResourceNotFoundException());
 	}
 	
-//	@GetMapping(value="/houses/{owner}")
-//	public House getHouseByOwner(@PathVariable String owner) {
-//		return service.findHouseByOwner(owner).orElseThrow(()->new ResourceNotFoundException());
-//	}
-	
 	@GetMapping(value="/")
 	public String getResquest() {
 		return "Hola";
 	}
 	
 	@GetMapping(value="/items")
-	public List<Item> findAllItems(){
-		List<Item> items = service.findAllItems();
+	public List<Item> findAllItems(@RequestParam Map<String,String> mapa){
+		List<Item> items = service.findAllItems(mapa.get("name"));
 		return items;
 	}
 	
@@ -72,8 +72,15 @@ public class LiquibaseController {
 	}
 	
 	@GetMapping(value="/houses/{id}/items")
-	public List<Item> getItemsByHouse(@PathVariable int id) {
-		return service.findHouseById(id).orElseThrow(()->new ResourceNotFoundException()).getItems();
+	public List<Item> getItemsByHouse(@PathVariable int id, @RequestParam Map<String,String> mapa) {
+		List<Item> items = null;
+		if(mapa.containsKey("name")) {
+			items = service.findHouseById(id).orElseThrow(()->new ResourceNotFoundException()).getItems().stream().filter(i->mapa.get("name").equalsIgnoreCase(i.getName())).collect(Collectors.toList());
+		} else {
+			items = service.findHouseById(id).orElseThrow(()->new ResourceNotFoundException()).getItems();
+		}
+		return items;
+			
 	}
 	
 }

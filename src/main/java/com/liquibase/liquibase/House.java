@@ -1,6 +1,6 @@
 package com.liquibase.liquibase;
 
-    import java.io.Serializable;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +22,6 @@ import jakarta.persistence.*;
         @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
         @JoinColumn(name="HOUSE", referencedColumnName = "ID")
         private List<Item> items = new ArrayList<>();
-
-        
 
 		public List<Item> getItems() {
 			return items;
