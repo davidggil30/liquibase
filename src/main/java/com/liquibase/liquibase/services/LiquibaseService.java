@@ -38,15 +38,10 @@ public class LiquibaseService {
 	
 	public List<House> findAllHouses(String owner) {
 		List<House> houses = null;
-		
 		if(owner == null) {
-			houses = houseRepository.findAll();	
+			houses = houseRepository.findAll();
 		} else {
-			houses = houseRepository.findByOwner(owner);
-			for(int i = 0; i < houses.size(); i++) {
-				houses.get(i).getOwner().toUpperCase().contains(owner.toUpperCase());
-				
-			}
+			houses = houseRepository.findByOwnerIgnoreCase(owner);
 		}
 		return houses;
 	}

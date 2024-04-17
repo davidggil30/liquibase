@@ -16,7 +16,7 @@ import com.liquibase.liquibase.Item;
 public interface HouseRepository extends JpaRepository<House, Integer>{
 	public List<House> findAllByOrderByIdAsc();
 
-	public List<House> findByOwner(String owner);
+	public List<House> findByOwnerIgnoreCase(String owner);
 	
 	
 	

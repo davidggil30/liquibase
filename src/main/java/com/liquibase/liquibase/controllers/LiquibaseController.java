@@ -2,6 +2,7 @@ package com.liquibase.liquibase.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,8 @@ public class LiquibaseController {
 	}
 	
 	@GetMapping(value="/houses")
-	public List<House> findAllHouses(@RequestParam(name="o") String owner){
-		List<House> houses = service.findAllHouses(owner);
+	public List<House> findAllHouses(@RequestParam Map<String,String> mapa){
+		List<House> houses = service.findAllHouses(mapa.get("owner"));
 		return houses;
 	}
 	
