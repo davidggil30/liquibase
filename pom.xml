@@ -51,7 +51,6 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>${hibernate6.version}</version>
         </dependency>
         
         <!-- Dependencia Driver Oracle-->
@@ -81,19 +80,9 @@
         	<scope>runtime</scope>
     	</dependency>
     	
-    	<!-- TESTCONTAINERS-->
-    	<dependency>
-       		<groupId>org.testcontainers</groupId>
-       		<artifactId>testcontainers-bom</artifactId>
-    		<version>1.19.7</version>
-       		<type>pom</type>
-       		<scope>import</scope>
-     	</dependency>
-    	
     	<dependency>
     		<groupId>org.testcontainers</groupId>
     		<artifactId>postgresql</artifactId>
-    		<version>1.19.7</version>
     		<scope>test</scope>
 		</dependency>
     	
@@ -101,7 +90,6 @@
     	<dependency>
     		<groupId>org.testcontainers</groupId>
     		<artifactId>junit-jupiter</artifactId>
-    		<version>1.19.7</version>
     		<scope>test</scope>
 		</dependency>
 		
@@ -115,36 +103,15 @@
         <dependency>
 		    <groupId>io.rest-assured</groupId>
     		<artifactId>rest-assured</artifactId>
-		    <version>5.4.0</version>
 		    <scope>test</scope>
 		</dependency>
-		
-		<dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>s3</artifactId>
-            <version>2.25.31</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://github.com/testcontainers/testcontainers-java/issues/1442 -->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.12.701</version>
-            <scope>test</scope>
-        </dependency>
         
-         <dependency>
-            <groupId>org.liquibase</groupId> 
-            <artifactId>liquibase-core</artifactId>
-            <scope>test</scope>
-       	</dependency>
+<!--         <dependency>-->
+<!--            <groupId>org.liquibase</groupId> -->
+<!--            <artifactId>liquibase-core</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--       	</dependency>-->
         
-<!--        <dependency>-->
-<!--         	<groupId>org.liquibase.ext</groupId>-->
-<!--         	<artifactId>liquibase-hibernate5</artifactId>-->
-<!--         	<version>3.6</version>-->
-<!--         	<scope>test</scope>-->
-<!--      	</dependency>-->
         
 	</dependencies>
 	
@@ -157,64 +124,63 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.1</version>
 			</plugin>
-			<plugin>
-                    <groupId>org.liquibase</groupId>
-                    <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>${liquibase.version}</version>
-                    <configuration>
-                        <changeLogFile>${project.basedir}/src/test/resources/config/liquibase/master.xml</changeLogFile>
-                        <diffChangeLogFile>${project.basedir}/src/test/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
-                        <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql://localhost:5432/basic_tepol</url>
-                        <defaultSchemaName>basic_tepol</defaultSchemaName>
-                        <username>basic_tepol</username>
-                        <password>BASIC_TEPOL</password>
-						<referenceUrl>hibernate:spring:com.car.app.domain?dialect=org.hibernate.dialect.PostgreSQLDialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy&amp;driver-class-name=org.postgresql.Driver</referenceUrl>                        
-						<verbose>true</verbose>
-                        <logging>debug</logging>
-                        <contexts>test</contexts>
-                        <diffExcludeObjects>oauth_access_token, oauth_approvals, oauth_client_details, oauth_client_token, oauth_code, oauth_refresh_token</diffExcludeObjects>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.javassist</groupId>
-                            <artifactId>javassist</artifactId>
-                            <version>${javassist.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.liquibase.ext</groupId>
-                            <artifactId>liquibase-hibernate5</artifactId>
-                            <version>${liquibase-hibernate5.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-starter-data-jpa</artifactId>
-                            <version>${spring-boot.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>javax.validation</groupId>
-                            <artifactId>validation-api</artifactId>
-                            <version>${validation-api.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-core</artifactId>
-                            <version>${spring.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-context</artifactId>
-                            <version>${spring.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-beans</artifactId>
-                            <version>${spring.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
+<!--			<plugin>-->
+<!--                    <groupId>org.liquibase</groupId>-->
+<!--                    <artifactId>liquibase-maven-plugin</artifactId>-->
+<!--                    <version>${liquibase.version}</version>-->
+<!--                    <configuration>-->
+<!--                        <changeLogFile>${project.basedir}/src/test/resources/config/liquibase/master.xml</changeLogFile>-->
+<!--                        <diffChangeLogFile>${project.basedir}/src/test/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>-->
+<!--                        <driver>org.postgresql.Driver</driver>-->
+<!--                        <url>jdbc:postgresql://localhost:5432/basic_tepol</url>-->
+<!--                        <defaultSchemaName>basic_tepol</defaultSchemaName>-->
+<!--                        <username>basic_tepol</username>-->
+<!--                        <password>BASIC_TEPOL</password>-->
+<!--                        <referenceDriver>org.postgresql.Driver</referenceDriver>-->
+<!--						<referenceUrl>jdbc:postgresql://localhost:5432/basic_tepol</referenceUrl>                        -->
+<!--						<verbose>true</verbose>-->
+<!--                        <contexts>test</contexts>-->
+<!--                        <diffExcludeObjects>oauth_access_token, oauth_approvals, oauth_client_details, oauth_client_token, oauth_code, oauth_refresh_token</diffExcludeObjects>-->
+<!--                    </configuration>-->
+<!--                    <dependencies>-->
+<!--                        <dependency>-->
+<!--                            <groupId>org.javassist</groupId>-->
+<!--                            <artifactId>javassist</artifactId>-->
+<!--                            <version>${javassist.version}</version>-->
+<!--                        </dependency>-->
+<!--                        <dependency>-->
+<!--                            <groupId>org.liquibase.ext</groupId>-->
+<!--                            <artifactId>liquibase-hibernate5</artifactId>-->
+<!--                            <version>${liquibase-hibernate5.version}</version>-->
+<!--                        </dependency>-->
+<!--                        <dependency>-->
+<!--                            <groupId>org.springframework.boot</groupId>-->
+<!--                            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
+<!--                            <version>${spring-boot.version}</version>-->
+<!--                        </dependency>-->
+<!--                        <dependency>-->
+<!--                            <groupId>javax.validation</groupId>-->
+<!--                            <artifactId>validation-api</artifactId>-->
+<!--                            <version>${validation-api.version}</version>-->
+<!--                        </dependency>-->
+<!--                        <dependency>-->
+<!--                            <groupId>org.springframework</groupId>-->
+<!--                            <artifactId>spring-core</artifactId>-->
+<!--                            <version>${spring.version}</version>-->
+<!--                        </dependency>-->
+<!--                        <dependency>-->
+<!--                            <groupId>org.springframework</groupId>-->
+<!--                            <artifactId>spring-context</artifactId>-->
+<!--                            <version>${spring.version}</version>-->
+<!--                        </dependency>-->
+<!--                        <dependency>-->
+<!--                            <groupId>org.springframework</groupId>-->
+<!--                            <artifactId>spring-beans</artifactId>-->
+<!--                            <version>${spring.version}</version>-->
+<!--                        </dependency>-->
+<!--                    </dependencies>-->
+<!--                </plugin>-->
 		</plugins>
 		<testResources>
 			<testResource>
