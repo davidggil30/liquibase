@@ -23,6 +23,17 @@ import jakarta.persistence.*;
         @JoinColumn(name="HOUSE", referencedColumnName = "ID")
         private List<Item> items = new ArrayList<>();
 
+        @Column(name="description")
+        private String description;
+        
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
 		public List<Item> getItems() {
 			return items;
 		}
