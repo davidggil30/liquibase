@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.2.4</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.liquibase</groupId>
+	<artifactId>liquibase</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>liquibase</name>
+	<description>Demo project for Spring Boot</description>
+	<properties>
+		<java.version>17</java.version>
+		<start-class>com.liquibase.liquibase.LiquibaseApplication</start-class>
+        <liquibase.version>4.18.0</liquibase.version>
+        <liquibase-hibernate6.version>4.18.0</liquibase-hibernate6.version>
+        <hibernate6.version>6.1.5.Final</hibernate6.version>
+        <javassist.version>3.24.0-GA</javassist.version>
+        <validation-api.version>3.0.2</validation-api.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+		
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate6.version}</version>
+        </dependency>
+        
+        <!-- Dependencia Driver Oracle-->
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>19.3.0.0</version>
+        </dependency>
+        
+        <!-- Dependencia RestController-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <!-- Dependencia Assert-->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- Postgresql-->
+        <dependency>
+        	<groupId>org.postgresql</groupId>
+        	<artifactId>postgresql</artifactId>
+        	<scope>runtime</scope>
+    	</dependency>
+    	
+    	<!-- TESTCONTAINERS-->
+    	<dependency>
+       		<groupId>org.testcontainers</groupId>
+       		<artifactId>testcontainers-bom</artifactId>
+    		<version>1.19.7</version>
+       		<type>pom</type>
+       		<scope>import</scope>
+     	</dependency>
+    	
+    	<dependency>
+    		<groupId>org.testcontainers</groupId>
+    		<artifactId>postgresql</artifactId>
+    		<version>1.19.7</version>
+    		<scope>test</scope>
+		</dependency>
+    	
+    	<!-- junit-->
+    	<dependency>
+    		<groupId>org.testcontainers</groupId>
+    		<artifactId>junit-jupiter</artifactId>
+    		<version>1.19.7</version>
+    		<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>localstack</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- rest-secured-->
+        <dependency>
+		    <groupId>io.rest-assured</groupId>
+    		<artifactId>rest-assured</artifactId>
+		    <version>5.4.0</version>
+		    <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.25.31</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://github.com/testcontainers/testcontainers-java/issues/1442 -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.12.701</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- Client-->
+		
+<!--		<dependency>-->
+<!--    		<groupId>org.liquibase</groupId>-->
+<!--    		<artifactId>liquibase-core</artifactId>-->
+<!--    		<version>4.27.0</version>-->
+<!--		</dependency>-->
+		
+<!--		<dependency>-->
+<!--		    <groupId>org.liquibase</groupId>-->
+<!--		    <artifactId>liquibase-maven-plugin</artifactId>-->
+<!--    		<version>4.27.0</version>-->
+<!--		</dependency>-->
+		
+<!--        <dependency>-->
+<!--        	<groupId>com.liquibase</groupId>-->
+<!--        	<artifactId>hibernate-liquibase</artifactId>-->
+<!--        	<version>0.0.1-SNAPSHOT</version>-->
+<!--        </dependency>-->
+        
+        
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.1</version>
+			</plugin>
+		</plugins>
+		<testResources>
+			<testResource>
+				<directory>${project.basedir}/src/test/resources</directory>
+			</testResource>
+		</testResources>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+	</build>
+	
+	
+</project>
