@@ -82,6 +82,13 @@
     	
     	<dependency>
     		<groupId>org.testcontainers</groupId>
+    		<artifactId>oracle-xe</artifactId>
+    		<version>1.19.7</version>
+    		<scope>test</scope>
+		</dependency>
+    	
+    	<dependency>
+    		<groupId>org.testcontainers</groupId>
     		<artifactId>postgresql</artifactId>
     		<scope>test</scope>
 		</dependency>
@@ -105,13 +112,12 @@
     		<artifactId>rest-assured</artifactId>
 		    <scope>test</scope>
 		</dependency>
-        
-<!--         <dependency>-->
-<!--            <groupId>org.liquibase</groupId> -->
-<!--            <artifactId>liquibase-core</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--       	</dependency>-->
-        
+
+        <dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-configuration-processor</artifactId>
+        	<optional>true</optional>
+        </dependency>
 	</dependencies>
 	
 	<build>
@@ -124,62 +130,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
-			<plugin>
-                    <groupId>org.liquibase</groupId>
-                    <artifactId>liquibase-maven-plugin</artifactId>
-                    <configuration>
-                        <changeLogFile>${project.basedir}/src/test/resources/config/liquibase/master.xml</changeLogFile>
-                        <diffChangeLogFile>${project.basedir}/src/test/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
-						<outputChangeLogFile>${project.basedir}/src/test/resources/db/${maven.build.timestamp}_liquibase-changelog.xml</outputChangeLogFile>
-                        <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql://localhost:5432/basic_test</url>
-                       	<defaultSchemaName>basic_test</defaultSchemaName>
-                        <username>postgres</username>
-                        <password>postgres</password>
-                        <referenceDriver>org.postgresql.Driver</referenceDriver>
-                        <referenceUrl>hibernate:spring:es.gob.citco.basic.domain?dialect=org.hibernate.dialect.PostgreSQLDialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
-						<verbose>true</verbose>
-                        <contexts>test</contexts>
-                        <diffExcludeObjects>oauth_access_token, oauth_approvals, oauth_client_details, oauth_client_token, oauth_code, oauth_refresh_token</diffExcludeObjects>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.javassist</groupId>
-                            <artifactId>javassist</artifactId>
-                            <version>${javassist.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.liquibase.ext</groupId>
-                            <artifactId>liquibase-hibernate5</artifactId>
-                            <version>${liquibase-hibernate5.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-starter-data-jpa</artifactId>
-                            <version>${spring-boot.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>javax.validation</groupId>
-                            <artifactId>validation-api</artifactId>
-                            <version>${validation-api.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-core</artifactId>
-                            <version>${spring.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-context</artifactId>
-                            <version>${spring.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-beans</artifactId>
-                            <version>${spring.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
 		</plugins>
 		<testResources>
 			<testResource>

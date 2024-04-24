@@ -1,7 +1,6 @@
 package com.liquibase.liquibase.services;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +49,7 @@ public class LiquibaseService {
 	}
 
 	public List<House> saveAllHouses(List<House> houses) {
+		houses.stream().filter(h->!h.getItems().isEmpty()).forEach(h->h.getItems().forEach(i->i.setHouse(h)));
 		return houseRepository.saveAll(houses);
 	}
 

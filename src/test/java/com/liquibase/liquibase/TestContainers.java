@@ -3,9 +3,12 @@ package com.liquibase.liquibase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -23,11 +26,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestClient;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.OracleContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
+
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -37,24 +41,22 @@ public class TestContainers {
 	@LocalServerPort
 	private int port;
 	
-	@Value("${REMOTE_BASE_URI:http://localhost}")
+	@Value("${remote.base.uri}")
 	String baseURI;
 
 	RestClient restClient() {
 	  return RestClient.create(baseURI + ":" + port + "/api");
 	}
 	
-    static DockerImageName postgres = DockerImageName.parse("postgres:latest");
-
+	static DockerImageName oracle = DockerImageName.parse("gvenzl/oracle-xe");
+	
 	@Container
-	static PostgreSQLContainer<?> container = new PostgreSQLContainer<>(postgres)
+	static OracleContainer container = new OracleContainer(oracle)
 		.withDatabaseName("BASIC_TEST")
-		.withUsername("postgres")
-		.withPassword("postgres")
-		.withReuse(true)
+		.withPassword("oracle")
 		.withCopyFileToContainer(
 				MountableFile.forClasspathResource(
-						"db/migration/"), "/docker-entrypoint-initdb.d/");
+						"db/oracle/"), "/docker-entrypoint-initdb.d/");
 	
 	@BeforeAll
 	public static void beforeAll() {
@@ -62,7 +64,7 @@ public class TestContainers {
 	}
 
 	@BeforeEach
-	public void Before() {		
+	public void Before() throws IOException, ParserConfigurationException{		
 		House house1 = new House();
 		house1.setOwner("David");
 		house1.setFullypaid(true);
@@ -83,7 +85,8 @@ public class TestContainers {
 				  .contentType(MediaType.APPLICATION_JSON)
 				  .body(houses)
 				  .retrieve()
-				  .toBodilessEntity(); 
+				  .toBodilessEntity();
+				
 	}
 	
 	@AfterEach
@@ -101,16 +104,16 @@ public class TestContainers {
 	
 	@DynamicPropertySource
 	public static void configureProperties(DynamicPropertyRegistry registry) {
-	    registry.add("spring.datasource.url", container::getJdbcUrl);
-	    registry.add("spring.datasource.username", container::getUsername);
-	    registry.add("spring.datasource.password", container::getPassword);
+	    registry.add("spring.datasource.url", () -> String.format("jdbc:oracle:thin:@localhost:%d/xe", container.getFirstMappedPort()));
+	    registry.add("spring.datasource.username", () -> "BASIC_TEST");
+	    registry.add("spring.datasource.password", () -> "BASIC_TEST");
 	}
 	
 	@Test
 	public void prueba1Client() {
 		List<House> houses = restClient().get() 
-				  .uri("/houses") 
-				  .retrieve() 
+				  .uri("/houses")
+				  .retrieve()
 				  .body(new ParameterizedTypeReference<List<House>>(){}); 
 		assertEquals(2, houses.size());
 	}
@@ -140,9 +143,6 @@ public class TestContainers {
 				  .retrieve() 
 				  .body(new ParameterizedTypeReference<List<House>>(){});
 		assertEquals(houses.stream().filter(house->house.getOwner().contentEquals("Ricardo")).collect(Collectors.toList()).size(), 0);
-
 	}
-
-	
 	
 }

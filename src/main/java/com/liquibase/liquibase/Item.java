@@ -1,6 +1,9 @@
 package com.liquibase.liquibase;
 
-    import java.io.Serializable;
+import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 	@Table(name="ITEM")
     @Entity
@@ -13,8 +16,21 @@ import jakarta.persistence.*;
         private Integer id;
         @Column(name="name")
         private String name;
+        
+        @JsonIgnore
+        @ManyToOne
+        @JoinColumn(name="HOUSE", referencedColumnName = "ID", nullable=false)
+        private House house;
 
-        public Item() {}
+        public House getHouse() {
+			return house;
+		}
+
+		public void setHouse(House house) {
+			this.house = house;
+		}
+
+		public Item() {}
         
         public Item(String name) {
         	this.name = name;

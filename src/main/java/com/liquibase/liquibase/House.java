@@ -19,20 +19,8 @@ import jakarta.persistence.*;
         @Column(name = "fullypaid")
         private Boolean fullypaid;
         
-        @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-        @JoinColumn(name="HOUSE", referencedColumnName = "ID")
+        @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="house")
         private List<Item> items = new ArrayList<>();
-
-//        @Column(name="description")
-//        private String description;
-//        
-//		public String getDescription() {
-//			return description;
-//		}
-//
-//		public void setDescription(String description) {
-//			this.description = description;
-//		}
 
 		public List<Item> getItems() {
 			return items;
