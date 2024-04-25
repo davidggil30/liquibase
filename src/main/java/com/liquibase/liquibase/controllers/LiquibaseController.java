@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.liquibase.liquibase.House;
-import com.liquibase.liquibase.Item;
+import com.liquibase.House;
+import com.liquibase.Item;
 import com.liquibase.liquibase.exceptions.ResourceNotFoundException;
 import com.liquibase.liquibase.services.LiquibaseService;
 

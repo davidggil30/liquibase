@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.liquibase.liquibase.House;
-import com.liquibase.liquibase.Item;
+import com.liquibase.House;
+import com.liquibase.Item;
 import com.liquibase.liquibase.repositories.HouseRepository;
 import com.liquibase.liquibase.repositories.ItemRepository;
 

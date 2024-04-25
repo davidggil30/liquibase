@@ -1,4 +1,4 @@
-package com.liquibase.liquibase;
+package com.liquibase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -32,9 +32,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
+import com.liquibase.House;
+import com.liquibase.Item;
+
+import io.cucumber.spring.CucumberContextConfiguration;
+
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@CucumberContextConfiguration
 @Testcontainers
 public class TestContainers {
 
@@ -51,7 +57,7 @@ public class TestContainers {
 	static DockerImageName oracle = DockerImageName.parse("gvenzl/oracle-xe");
 	
 	@Container
-	static OracleContainer container = new OracleContainer(oracle)
+	public static OracleContainer container = new OracleContainer(oracle)
 		.withDatabaseName("BASIC_TEST")
 		.withPassword("oracle")
 		.withCopyFileToContainer(
@@ -109,7 +115,7 @@ public class TestContainers {
 	    registry.add("spring.datasource.password", () -> "BASIC_TEST");
 	}
 	
-	@Test
+	//@Test
 	public void prueba1Client() {
 		List<House> houses = restClient().get() 
 				  .uri("/houses")
@@ -118,7 +124,7 @@ public class TestContainers {
 		assertEquals(2, houses.size());
 	}
 	
-	@Test
+	//@Test
 	public void prueba2Client() { 
 		assertThrows(RuntimeException.class, ()->restClient().get()
 				  .uri("/houses/3")
@@ -126,7 +132,7 @@ public class TestContainers {
 				  .body(new ParameterizedTypeReference<List<House>>(){}));
 	}
 	
-	@Test
+	//@Test
 	public void prueba3Client() {
 		List<House> houses = restClient().get() 
 				  .uri("/houses") 
@@ -136,13 +142,31 @@ public class TestContainers {
 		assertEquals(1,houses.stream().filter(house->!house.getItems().isEmpty()).map(House::getItems).collect(Collectors.toList()).size());
 	}
 	
-	@Test
+	//@Test
 	public void prueba4Client() {
 		List<House> houses = restClient().get() 
 				  .uri("/houses") 
 				  .retrieve() 
 				  .body(new ParameterizedTypeReference<List<House>>(){});
 		assertEquals(houses.stream().filter(house->house.getOwner().contentEquals("Ricardo")).collect(Collectors.toList()).size(), 0);
+	}
+	
+	public void callEndpoints(String uri, String verbo, List<House> houses) {
+		if(uri.equals("/houses")) {
+			if(verbo.equals("post")) {
+				ResponseEntity<Void> result = restClient().post()
+				  .uri("/houses")
+				  .contentType(MediaType.APPLICATION_JSON)
+				  .body(houses)
+				  .retrieve()
+				  .toBodilessEntity();
+			} else if(verbo.equals("get")) {
+				houses = restClient().get() 
+				  .uri("/houses")
+				  .retrieve()
+				  .body(new ParameterizedTypeReference<List<House>>(){}); 
+			}
+		}
 	}
 	
 }

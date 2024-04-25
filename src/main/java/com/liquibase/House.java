@@ -1,4 +1,4 @@
-package com.liquibase.liquibase;
+package com.liquibase;
 
 import java.io.Serializable;
 import java.util.ArrayList;
