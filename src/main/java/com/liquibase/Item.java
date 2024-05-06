@@ -51,6 +51,4 @@ import jakarta.persistence.*;
         public void setName(String name) {
             this.name = name;
         }
-
-
     }

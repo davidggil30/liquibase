@@ -10,11 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,19 +22,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClient.ResponseSpec;
 import org.testcontainers.containers.OracleContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-import com.liquibase.House;
-import com.liquibase.Item;
-
 import io.cucumber.spring.CucumberContextConfiguration;
 
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT/*, classes = RestClientConfiguration.class*/)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @CucumberContextConfiguration
 @Testcontainers
@@ -49,9 +43,14 @@ public class TestContainers {
 	
 	@Value("${remote.base.uri}")
 	String baseURI;
-
+	
+	private RestClient restClient = null;
+	
 	RestClient restClient() {
-	  return RestClient.create(baseURI + ":" + port + "/api");
+		if(restClient == null) {
+			restClient = RestClient.create(baseURI + ":" + port + "/api");
+		} 
+		return restClient;
 	}
 	
 	static DockerImageName oracle = DockerImageName.parse("gvenzl/oracle-xe");
@@ -64,12 +63,7 @@ public class TestContainers {
 				MountableFile.forClasspathResource(
 						"db/oracle/"), "/docker-entrypoint-initdb.d/");
 	
-	@BeforeAll
-	public static void beforeAll() {
-		container.start();
-	}
-
-	@BeforeEach
+	//@BeforeEach
 	public void Before() throws IOException, ParserConfigurationException{		
 		House house1 = new House();
 		house1.setOwner("David");
@@ -92,7 +86,6 @@ public class TestContainers {
 				  .body(houses)
 				  .retrieve()
 				  .toBodilessEntity();
-				
 	}
 	
 	@AfterEach
@@ -101,11 +94,6 @@ public class TestContainers {
 				.uri("/houses")
 				.retrieve()
 				.toBodilessEntity();
-	}
-	
-	@AfterAll
-	public static void afterAll() {
-		container.stop();
 	}
 	
 	@DynamicPropertySource
@@ -151,22 +139,33 @@ public class TestContainers {
 		assertEquals(houses.stream().filter(house->house.getOwner().contentEquals("Ricardo")).collect(Collectors.toList()).size(), 0);
 	}
 	
-	public void callEndpoints(String uri, String verbo, List<House> houses) {
+	public ResponseEntity callEndpoints(String uri, String verbo, List<House> houses, String owner) {
+		ResponseSpec response = null;
 		if(uri.equals("/houses")) {
 			if(verbo.equals("post")) {
-				ResponseEntity<Void> result = restClient().post()
+				response = restClient().post()
 				  .uri("/houses")
 				  .contentType(MediaType.APPLICATION_JSON)
 				  .body(houses)
-				  .retrieve()
-				  .toBodilessEntity();
+				  .retrieve();
 			} else if(verbo.equals("get")) {
-				houses = restClient().get() 
-				  .uri("/houses")
-				  .retrieve()
-				  .body(new ParameterizedTypeReference<List<House>>(){}); 
+				if(owner == null) {
+					response = restClient().get()
+							  .uri("/houses")
+							  .retrieve();
+				} else {
+					response = restClient().get()
+							  .uri("/houses?owener=" + owner)
+							  .retrieve();
+				}
+				
+			} else if(verbo.equals("delete")) {
+				response = restClient().delete()
+						.uri("/houses")
+						.retrieve();
 			}
 		}
+		return response.toEntity(Object.class);
 	}
 	
 }
